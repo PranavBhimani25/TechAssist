@@ -88,16 +88,23 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// --- CORS Policy ---
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins("https://tech-assist-ui.vercel.app")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+
 
 builder.Services.AddAuthorization();
 
 
-// --- CORS Policy ---
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-        policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
-});
 
 
 
@@ -110,7 +117,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAll");
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 
 app.UseHttpsRedirection();
