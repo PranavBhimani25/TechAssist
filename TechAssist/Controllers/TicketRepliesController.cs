@@ -66,7 +66,7 @@ namespace TechAssist.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetRepliesByTicketIdGetRepliesByTicketId(int id)
+        public async Task<ActionResult> GetRepliesByTicketId(int id)
         {
             var reply = await _db.TicketReplies
                 .Include(r => r.Author)
