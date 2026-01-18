@@ -120,6 +120,32 @@ namespace TechAssist.Controllers
             });
         }
 
+        [HttpGet("GetRepliesForEngTicket/{ticketId}")]
+        public async Task<IActionResult> getrepliesforengticket(int ticketId)
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var ticket = await _db.Tickets.FirstOrDefaultAsync(x => x.Id == ticketId && x.AssignedEngineerId == userId);
+            if (ticket == null) return Forbid();
+            var replies = await _db.TicketReplies
+                .Where(r => r.TicketId == ticketId)
+                .OrderBy(r => r.CreatedAt)
+                .Select(r => new
+                {
+                    r.Id,
+                    r.Message,
+                    r.CreatedAt,
+                    Author = r.Author.FullName,
+                    Role = r.Author.Role.ToString()
+                }).ToListAsync();
+            return Ok(new
+            {
+                ticket.Id,
+                ticket.Title,
+                ticket.Status,
+                replies
+            });
+        }
+
         [Authorize(Roles = "Admin")]
         [HttpDelete("/api/{replyId}")]
         public async Task<IActionResult> DeleteReply(int replyId)
