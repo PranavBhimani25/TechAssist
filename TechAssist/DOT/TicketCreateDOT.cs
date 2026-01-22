@@ -11,5 +11,7 @@ namespace TechAssist.DOT
 
         [DefaultValue("Medium")]
         public string Priority { get; set; }
+
+        public IFormFile? Image { get; set; }
     }
 }

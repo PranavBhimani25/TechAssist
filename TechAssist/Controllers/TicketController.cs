@@ -21,11 +21,26 @@ namespace TechAssist.Controllers
 
         [Authorize]
         [HttpPost("CreateTicket")]
-        public async Task<ActionResult> CreateTicket([FromBody] TicketCreateDOT dot) 
+        public async Task<ActionResult> CreateTicket([FromForm] TicketCreateDOT dot) 
         {
             var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
-            //Console.WriteLine(userId);
-          
+            string? imageUrl = null;
+
+            if (dot.Image != null)
+            {
+                var uploadsPath = Path.Combine("wwwroot", "uploads", "tickets");
+                Directory.CreateDirectory(uploadsPath);
+
+                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(dot.Image.FileName)}";
+                var fullPath = Path.Combine(uploadsPath, fileName);
+
+                using var stream = new FileStream(fullPath, FileMode.Create);
+                await dot.Image.CopyToAsync(stream);
+
+                imageUrl = $"/uploads/tickets/{fileName}";
+            }
+
+
             var newticket = new Ticket
             {
                 Title = dot.Title,
@@ -34,6 +49,7 @@ namespace TechAssist.Controllers
                 ProductId = dot.ProductId,
                 Priority = dot.Priority,
                 Status = "Open",
+                ImageUrl = imageUrl,
                 CreatedAt = DateTime.UtcNow,
             };
             _db.AddAsync(newticket);

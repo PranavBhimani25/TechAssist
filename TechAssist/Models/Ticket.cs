@@ -23,6 +23,8 @@ namespace TechAssist.Models
         public string Priority { get; set; } = "Medium"; // Could be enum
         public string Status { get; set; } = "Open"; // Open/InProgress/Resolved/Closed
 
+        public string? ImageUrl { get; set; }   
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
